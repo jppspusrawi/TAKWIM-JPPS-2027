@@ -249,6 +249,36 @@ dialog::backdrop{background:rgba(14,22,44,.45)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .foot{max-width:1400px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
 
+@media (max-width:760px){
+  table.lt,table.lt2{min-width:0!important}
+  .tscroll{overflow-x:visible}
+  .lt thead{display:none}
+  .lt,.lt tbody{display:block;width:100%}
+  .lt tr.mrow{display:block}
+  .lt tr.mrow td{display:block;border-top:0}
+  .lt tr.r{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px;padding:12px 14px;border-top:1px solid var(--line-2)}
+  .lt tr.r td{display:block;border:0;padding:0;white-space:normal!important;min-width:0!important}
+  .lt .c-no{display:none!important}
+  .lt .c-prog{order:1;width:100%;font-size:14.5px}
+  .lt .c-tgl{order:2;font-weight:700;color:var(--navy)}
+  .lt .c-hari{order:3;font-weight:600;color:var(--navy)}
+  .lt .c-masa{order:4}
+  .lt .c-masa::before{content:"· "}
+  .lt .c-hj{order:5;width:100%}
+  .lt .c-kat{order:6}
+  .lt .c-st{order:7}
+  .lt .c-peng{order:8;width:100%;font-size:12.5px;color:var(--muted)}
+  .lt .c-peng::before{content:"Pengarah: ";font-weight:600}
+  .lt .c-cal{order:9;width:100%;margin-top:6px}
+  .lt .c-cal .calbtns.cmp{flex-wrap:wrap}
+  .lt .c-sem{order:10;width:100%;margin-top:2px}
+  .lt2 tr.r{gap:2px 10px}
+  .lt2 tr.r td.nm{order:-1;width:100%}
+  .lt2 .c-akhir::before{content:"– "}
+  .lt2 .c-n{color:var(--muted)}
+  .lt2 .c-n::before{content:"("}
+  .lt2 .c-n::after{content:" hari)"}
+}
 @media (max-width:640px){
   .hero h1{font-size:21px}
   .appicon{width:54px;height:54px}
@@ -1361,10 +1391,10 @@ function renderListTable(){
     var m=+p.tarikh.slice(5,7)-1;
     if(m!==lm){o+='<tr class="mrow"><td colspan="10">'+BULAN[m].toUpperCase()+' '+p.tarikh.slice(0,4)+'</td></tr>';lm=m}
     var w=semak(p);
-    o+='<tr class="r" data-p="'+esc(p.id)+'"><td>'+(i+1)+'</td><td style="white-space:nowrap">'+esc(tarikhCell(p))+'</td><td>'+HARI[dow(p.tarikh)]+'</td><td class="sm" style="white-space:nowrap">'+esc(hLong(p.tarikh))+'</td><td class="sm">'+esc(p.masa||'–')+'</td>'+
-      '<td><div class="nm">'+(p.kat==='besar'?'★ ':'')+esc(p.nama)+'</div>'+(p.catatan?'<div class="sm">'+esc(p.catatan)+'</div>':'')+(p.tempat?'<div class="sm">📍 '+esc(p.tempat)+'</div>':'')+'</td>'+
-      '<td><span class="tag c-'+esc(p.kat)+'">'+esc(katName(p.kat))+'</span></td><td>'+esc(p.pengarah||'–')+(p.timbalan?'<div class="sm">Timb.: '+esc(p.timbalan)+'</div>':'')+'</td>'+
-      '<td><span class="st '+esc(p.status)+'">'+esc(p.status||'–')+'</span></td><td style="min-width:170px">'+(w.length?warnHTML(w):'<span class="ok">✓ OK</span>')+'</td></tr>';
+    o+='<tr class="r" data-p="'+esc(p.id)+'"><td class="c-no">'+(i+1)+'</td><td class="c-tgl" style="white-space:nowrap">'+esc(tarikhCell(p))+'</td><td class="c-hari">'+HARI[dow(p.tarikh)]+'</td><td class="sm c-hj" style="white-space:nowrap">'+esc(hLong(p.tarikh))+'</td><td class="sm c-masa">'+esc(p.masa||'–')+'</td>'+
+      '<td class="c-prog"><div class="nm">'+(p.kat==='besar'?'★ ':'')+esc(p.nama)+'</div>'+(p.catatan?'<div class="sm">'+esc(p.catatan)+'</div>':'')+(p.tempat?'<div class="sm">📍 '+esc(p.tempat)+'</div>':'')+'</td>'+
+      '<td class="c-kat"><span class="tag c-'+esc(p.kat)+'">'+esc(katName(p.kat))+'</span></td><td class="c-peng">'+esc(p.pengarah||'–')+(p.timbalan?'<div class="sm">Timb.: '+esc(p.timbalan)+'</div>':'')+'</td>'+
+      '<td class="c-st"><span class="st '+esc(p.status)+'">'+esc(p.status||'–')+'</span></td><td class="c-sem" style="min-width:170px">'+(w.length?warnHTML(w):'<span class="ok">✓ OK</span>')+'</td></tr>';
   });
   if(!rows.length)o+='<tr><td colspan="10" class="empty-note">Tiada program sepadan dengan tapisan.</td></tr>';
   $('#lt-wrap').innerHTML=o+'</tbody></table>';
@@ -1374,12 +1404,12 @@ function renderListTable(){
 function renderTarikh(){
   var y=String(S.meta.tahun);
   var T=S.tarikh.filter(function(t){return t.tarikh.slice(0,4)===y}).sort(function(a,b){return a.tarikh<b.tarikh?-1:a.tarikh>b.tarikh?1:0});
-  var o='<div class="grid2"><div class="card"><div class="sec-h"><h2>Cuti Umum &amp; Tarikh Islam '+y+'</h2>'+(RO?'':'<button class="btn navy" data-a="addT">+ Tarikh</button>')+'</div><div class="tscroll" style="border:0"><table class="lt" style="min-width:520px"><thead><tr><th>Tarikh</th><th>Hari</th><th>Perkara</th><th>Hijri</th><th>Jenis</th></tr></thead><tbody>';
+  var o='<div class="grid2"><div class="card"><div class="sec-h"><h2>Cuti Umum &amp; Tarikh Islam '+y+'</h2>'+(RO?'':'<button class="btn navy" data-a="addT">+ Tarikh</button>')+'</div><div class="tscroll" style="border:0"><table class="lt lt2" style="min-width:520px"><thead><tr><th>Tarikh</th><th>Hari</th><th>Perkara</th><th>Hijri</th><th>Jenis</th></tr></thead><tbody>';
   T.forEach(function(t){o+='<tr class="r" data-t="'+esc(t.id)+'"><td style="white-space:nowrap">'+fmtD(t.tarikh)+'</td><td>'+HARI[dow(t.tarikh)]+'</td><td class="nm" style="color:'+(isHol(t)?'var(--red)':t.jenis==='islam'?'var(--isl)':'#6B5BA8')+'">'+esc(t.nama)+'</td><td class="sm" style="white-space:nowrap">'+esc(hLong(t.tarikh))+'</td><td class="sm">'+esc(JENIS[t.jenis]||t.jenis)+'</td></tr>'});
   if(!T.length)o+='<tr><td colspan="5" class="empty-note">Tiada rekod.</td></tr>';
-  o+='</tbody></table></div></div><div class="card"><div class="sec-h"><h2>Cuti Sekolah '+y+'</h2>'+(RO?'':'<button class="btn navy" data-a="addS">+ Cuti Sekolah</button>')+'</div><div class="tscroll" style="border:0"><table class="lt" style="min-width:460px"><thead><tr><th>Mula</th><th>Akhir</th><th>Hari</th><th>Perkara</th></tr></thead><tbody>';
+  o+='</tbody></table></div></div><div class="card"><div class="sec-h"><h2>Cuti Sekolah '+y+'</h2>'+(RO?'':'<button class="btn navy" data-a="addS">+ Cuti Sekolah</button>')+'</div><div class="tscroll" style="border:0"><table class="lt lt2" style="min-width:460px"><thead><tr><th>Mula</th><th>Akhir</th><th>Hari</th><th>Perkara</th></tr></thead><tbody>';
   S.sekolah.filter(function(s){return s.mula.slice(0,4)===y||s.akhir.slice(0,4)===y}).sort(function(a,b){return a.mula<b.mula?-1:1}).forEach(function(s){
-    o+='<tr class="r" data-s="'+esc(s.id)+'"><td style="white-space:nowrap">'+fmtD(s.mula)+'</td><td style="white-space:nowrap">'+fmtD(s.akhir)+'</td><td>'+(diff(s.mula,s.akhir)+1)+'</td><td class="nm">'+esc(s.nama)+'</td></tr>'});
+    o+='<tr class="r" data-s="'+esc(s.id)+'"><td style="white-space:nowrap">'+fmtD(s.mula)+'</td><td class="c-akhir" style="white-space:nowrap">'+fmtD(s.akhir)+'</td><td class="c-n">'+(diff(s.mula,s.akhir)+1)+'</td><td class="nm">'+esc(s.nama)+'</td></tr>'});
   o+='</tbody></table></div><p class="sm" style="color:var(--muted);font-size:12px;margin:10px 0 0">'+esc(S.meta.kawasan||'')+(RO?'.':'. Klik mana-mana baris untuk edit.')+'</p></div></div>';
   $('#v-tarikh').innerHTML=o;
 }
@@ -1852,9 +1882,9 @@ function renderListRO(){
   rows.forEach(function(p,i){
     var m=+p.tarikh.slice(5,7)-1;
     if(m!==lm){o+='<tr class="mrow"><td colspan="8">'+BULAN[m].toUpperCase()+' '+p.tarikh.slice(0,4)+'</td></tr>';lm=m}
-    o+='<tr class="r" data-p="'+esc(p.id)+'"><td>'+(i+1)+'</td><td style="white-space:nowrap">'+esc(tarikhCell(p))+'</td><td>'+HARI[dow(p.tarikh)]+'</td><td class="sm" style="white-space:nowrap">'+esc(hLong(p.tarikh))+'</td><td class="sm">'+esc(p.masa||'–')+'</td>'+
-      '<td><div class="nm">'+(p.kat==='besar'?'★ ':'')+esc(p.nama)+'</div>'+(p.catatan?'<div class="sm">'+esc(p.catatan)+'</div>':'')+(p.status==='Ditangguh'?'<span class="st Ditangguh">Ditangguh</span>':'')+'</td>'+
-      '<td><span class="tag c-'+esc(p.kat)+'">'+esc(katName(p.kat))+'</span></td><td>'+calBtns(p,true)+'</td></tr>';
+    o+='<tr class="r" data-p="'+esc(p.id)+'"><td class="c-no">'+(i+1)+'</td><td class="c-tgl" style="white-space:nowrap">'+esc(tarikhCell(p))+'</td><td class="c-hari">'+HARI[dow(p.tarikh)]+'</td><td class="sm c-hj" style="white-space:nowrap">'+esc(hLong(p.tarikh))+'</td><td class="sm c-masa">'+esc(p.masa||'–')+'</td>'+
+      '<td class="c-prog"><div class="nm">'+(p.kat==='besar'?'★ ':'')+esc(p.nama)+'</div>'+(p.catatan?'<div class="sm">'+esc(p.catatan)+'</div>':'')+(p.status==='Ditangguh'?'<span class="st Ditangguh">Ditangguh</span>':'')+'</td>'+
+      '<td class="c-kat"><span class="tag c-'+esc(p.kat)+'">'+esc(katName(p.kat))+'</span></td><td class="c-cal">'+calBtns(p,true)+'</td></tr>';
   });
   if(!rows.length)o+='<tr><td colspan="8" class="empty-note">Tiada program sepadan dengan tapisan.</td></tr>';
   $('#lt-wrap').innerHTML=o+'</tbody></table>';
