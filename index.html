@@ -315,7 +315,7 @@ dialog::backdrop{background:rgba(14,22,44,.45)}
 .hb td.c{text-align:center}
 .hb .nt{font-style:italic;font-size:.9em;margin-top:.8em}
 @media print{
-  @page{size:A4 portrait;margin:7mm}
+  @page{size:A4 portrait;margin:12mm}
   html,body{background:#fff!important}
   body>*:not(#print-area){display:none!important}
   #print-area{display:block}
@@ -343,8 +343,13 @@ dialog::backdrop{background:rgba(14,22,44,.45)}
 .pp .ph .t1 span{color:#A88317}
 .pp .ph .t2{font-size:7.5pt;color:#333}
 .pp .ph .t3{text-align:right;font-size:7pt;color:#444;line-height:1.35}
+.pp .ph .t1{font-size:11.5pt!important}
+.pp .ph .t3{font-size:6.2pt;white-space:normal;max-width:60mm}
+.pp .ph .r{flex:0 1 auto;min-width:0}
+.pp .ph .lg1{height:10mm}
+.pp .ph .lg2{height:6.5mm;margin-left:3mm}
 .pp .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:2.4mm 3mm}
-.pp .page.fill{height:279mm;display:flex;flex-direction:column;overflow:hidden}
+.pp .page.fill{height:270mm;display:flex;flex-direction:column;overflow:hidden}
 .pp .page.fill .pgrid{flex:1;min-height:0;grid-template-rows:repeat(6,minmax(0,1fr))}
 .pg1 .pgrid{grid-auto-flow:column}
 .pp .page.fill .month{overflow:hidden;min-height:0}
@@ -369,8 +374,8 @@ dialog::backdrop{background:rgba(14,22,44,.45)}
 .pg1 .mt th.wcol,.pg1 .mt td.wl{width:9.5mm}
 .pg1 .mt td.wl{font-size:4.8pt;line-height:1.1;letter-spacing:0}
 .pg1 .cw{min-height:0;height:5.9mm;overflow:hidden;padding:.2mm .3mm;gap:.15mm}
-.pg1 .num{font-size:6.2pt;line-height:1;min-width:3.3mm;height:2.7mm;border-radius:.5mm;padding:0 .3mm}
-.pg1 .hj{font-size:4.9pt}
+.pg1 .num{font-size:6pt;line-height:1;min-width:3.2mm;height:2.35mm;border-radius:.5mm;padding:0 .3mm}
+.pg1 .hj{font-size:4.6pt}
 .pg1 .dn{line-height:1}
 .pg1 .chip{font-size:5.4pt;line-height:1.02;padding:.1mm .35mm;border-left-width:.6mm;border-radius:.5mm}
 .pg1 .hn{font-size:5.2pt;line-height:1.02}
@@ -1951,10 +1956,10 @@ function listPrint(withPeng){
 /* scale a single-page print (list) so it always fits one A4 page */
 function fitOne(pa){
   var keep=pa.getAttribute('style')||'';
-  pa.style.cssText='display:block;position:absolute;left:-20000px;top:0;width:196mm;visibility:hidden';
-  var el=pa.firstElementChild,mm=parseFloat(getComputedStyle(pa).width)/196,max=278*mm,z=1;
+  pa.style.cssText='display:block;position:absolute;left:-20000px;top:0;width:186mm;visibility:hidden';
+  var el=pa.firstElementChild,mm=parseFloat(getComputedStyle(pa).width)/186,max=270*mm,z=1;
   el.style.zoom='';el.style.width='';
-  for(var k=0;k<10;k++){var h=el.getBoundingClientRect().height;if(h<=max)break;z=Math.max(0.45,z*Math.max(0.85,max/h)*0.99);el.style.zoom=z;el.style.width=(196/z).toFixed(2)+'mm'}
+  for(var k=0;k<10;k++){var h=el.getBoundingClientRect().height;if(h<=max)break;z=Math.max(0.45,z*Math.max(0.85,max/h)*0.99);el.style.zoom=z;el.style.width=(186/z).toFixed(2)+'mm'}
   pa.setAttribute('style',keep);
 }
 function hebahanPrint(withPeng){
@@ -1996,8 +2001,8 @@ function hebahanPrint(withPeng){
 /* shrink the hebahan so it always fits one A4 page */
 function fitHeb(pa){
   var keep=pa.getAttribute('style')||'';
-  pa.style.cssText='display:block;position:absolute;left:-20000px;top:0;width:196mm;visibility:hidden';
-  var hb=$('.hb',pa),inn=$('.hbin',pa),mm=parseFloat(getComputedStyle(pa).width)/196,max=279*mm,fs=10.5,k=0;
+  pa.style.cssText='display:block;position:absolute;left:-20000px;top:0;width:186mm;visibility:hidden';
+  var hb=$('.hb',pa),inn=$('.hbin',pa),mm=parseFloat(getComputedStyle(pa).width)/186,max=270*mm,fs=10.5,k=0;
   hb.style.fontSize=fs+'pt';
   while(inn.getBoundingClientRect().height>max&&fs>5.5&&k<40){fs-=0.2;hb.style.fontSize=fs.toFixed(2)+'pt';k++}
   pa.setAttribute('style',keep);
@@ -2015,23 +2020,20 @@ function preparePrint(mode,withPeng){
   if(mode==='heb')fitHeb(pa);
   if(mode==='list')fitOne(pa);
 }
-/* stretch months to fill the A4 page; busy weeks get taller rows, then shrink any label that still does not fit */
+/* stretch months to fill the A4 page with equal-size boxes, then shrink any label that does not fit */
 function fitPrint(pa){
   var keep=pa.getAttribute('style')||'';
-  pa.style.cssText='display:block;position:absolute;left:-20000px;top:0;width:196mm;visibility:hidden';
-  var mm=parseFloat(getComputedStyle(pa).width)/196;
+  pa.style.cssText='display:block;position:absolute;left:-20000px;top:0;width:186mm;visibility:hidden';
+  var mm=parseFloat(getComputedStyle(pa).width)/186;
   $$('.page.fill',pa).forEach(function(pg){
     var grid=$('.pgrid',pg),months=$$('.month',grid);if(!months.length)return;
     var gap=parseFloat(getComputedStyle(grid).rowGap)||0,rows=Math.ceil(months.length/2);
     var mh=(grid.getBoundingClientRect().height-gap*(rows-1))/rows;
     months.forEach(function(mo){
       var head=$('.mh',mo).getBoundingClientRect().height+$('thead',mo).getBoundingClientRect().height;
-      var trs=$$('tbody tr',mo),avail=mh-head-3-trs.length*1.2,minRow=4.6*mm;
-      var need=trs.map(function(tr){var cs=$$('.cw',tr),mx=0;cs.forEach(function(c){c.style.height='auto'});cs.forEach(function(c){mx=Math.max(mx,c.scrollHeight)});return Math.max(minRow,mx+1)});
-      var tot=need.reduce(function(a,b){return a+b},0),hs;
-      if(tot<=avail){var ex=(avail-tot)/trs.length;hs=need.map(function(n){return n+ex})}
-      else{var spare=avail-minRow*trs.length,over=tot-minRow*trs.length;hs=need.map(function(n){return minRow+(n-minRow)*spare/over})}
-      trs.forEach(function(tr,k){var h=Math.floor(hs[k]*10)/10;$$('.cw',tr).forEach(function(c){c.style.height=h+'px'})});
+      var trs=$$('tbody tr',mo),avail=mh-head-3-trs.length*1.2;
+      var h=Math.floor(avail/trs.length*10)/10;   /* all boxes the same size */
+      $$('.cw',mo).forEach(function(c){c.style.height=h+'px'});
     });
   });
   var cx=document.createElement('canvas').getContext('2d');
@@ -2043,7 +2045,7 @@ function fitPrint(pa){
   });
   $$('.cw',pa).forEach(function(c){
     var it=$$('.chip,.hn',c);if(!it.length)return;var n=0;
-    while(c.scrollHeight>c.clientHeight+0.5&&n<14){var ch2=false;it.forEach(function(e){var f=parseFloat(getComputedStyle(e).fontSize);if(f>4.4){e.style.fontSize=Math.max(4.4,f*0.93)+'px';ch2=true}e.style.lineHeight='1'});if(!ch2)break;n++}
+    while(c.scrollHeight>c.clientHeight+0.5&&n<14){var ch2=false;it.forEach(function(e){var f=parseFloat(getComputedStyle(e).fontSize);if(f>3.9){e.style.fontSize=Math.max(3.9,f*0.94)+'px';ch2=true}e.style.lineHeight='1'});if(!ch2)break;n++}
   });
   pa.setAttribute('style',keep);
 }
